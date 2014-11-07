@@ -9,6 +9,8 @@ application:
     input.delay: "10 minutes"
     input.mssql-version: {v: "2008R2"}
     input.mssql-key: ""
+    input.mssql-sa-password: "123QweAsd"
+    input.mssql-port: 1433
   interfaces:
     input:
       server-os: "bind(mssql#input.server-os)"
@@ -20,8 +22,16 @@ application:
       delay: "bind(mssql#input.delay)"
       mssql-version: "bind(mssql#input.mssql-version)"
       mssql-key: "bind(mssql#input.mssql-key)"
-    output:
-      MSSQL-server-ip: "bind(mssql#result.mssql-server-ip)"
+      mssql-sa-password: "bind(mssql#input.mssql-sa-password)"
+      mssql-port: "bind(mssql#input.mssql-port)"
+    mssql:
+      schema: "bind(mssql#actions.schema-management)"
+      db: "bind(mssql#actions.db-management)"
+      user: "bind(mssql#actions.user-management)"
+      file-query: "bind(mssql#actions.file-query)"
+      db-host: "bind(mssql#result.db-host)"
+      db-port: "bind(mssql#result.db-port)"
+      dbms: "bind(mssql#result.dbms)"
   components:
     mssql:
       type: workflow.Instance
@@ -44,8 +54,31 @@ application:
               2008R2: {v: "2008R2"}
               2012R1: {v: "2012"}
           mssql-key: configuration(string)
+          mssql-sa-password: configuration(string)
+          mssql-port: configuration(int)
+        actions:
+          schema-management:
+             type: receive-command(string db-user, string db-user-password, list<string> db-user-privileges => object connection)
+             name: Manage Schema
+          db-management:
+             type: receive-command(string db-name, string db-action)
+             name: Database Management
+          user-management:
+             type: receive-command(list<string> app-hosts, string db-name, string db-user, string db-user-password, list<string> db-user-privileges, string user-action => object connection)
+             name: User Management
+          file-query:
+             type: receive-command(object connection, list<string> sql-url)
+             name: Run Sql Query
         result:
-          mssql-server-ip: publish-signal (list<string>)
+          db-host:
+            type: publish-signal(string)
+            name: Database Host
+          db-port: 
+            type: publish-signal(int)
+            name: Database listen port
+          dbms: 
+            type: publish-signal(object)
+            name: Database Parameters
       required: []
       configuration:
         configuration.workflows:
@@ -188,7 +221,7 @@ application:
                         
                         </powershell>
                   output:
-                    mssql-server-ip: ips
+                    mssql-ip: ips
               - wait-provision:
                   action: wait
                   precedingPhases: [provision]
@@ -200,13 +233,151 @@ application:
                   parameters:
                     isSudo: false
                     recipeUrl: "{$.recipe-url}"
-                    runList: [ "recipe[deploy]" ]
+                    runList: [ "recipe[cookbook_qubell_mssql]" ]
                     roles: [default]
                     jattrs:
                       sql_server:
                         version: "{$.mssql-version.v}"
                         product_key: "{$.mssql-key}"
+                        server_sa_password: "{$.mssql-sa-password}"
+                        port: "{$.mssql-port}"
             return:
-              mssql-server-ip:
-                description: Windows Server ips
-                value: "{$.mssql-server-ip}" 
+              db-host:
+                description: MSSQL Server ips
+                value: "{$.mssql-ip[0]}"
+              db-port:
+                description: MSSQL Server port
+                value: "{$.mssql-port}"
+              dbms:
+                value:
+                  db-type: "mssql"
+                  db-root-user: "sa"
+                  db-root-password: "{$.mssql-sa-password}"
+                  db-host: "{$.mssql-ip[0]}"
+                  db-port: "{$.mssql-port}"
+                  db-driver: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+          db-management:
+            parameters:
+              - db-name:
+                  description: DB name
+              - db-action:
+                  description: Management action (create, drop)
+            steps:
+              - manage-db:
+                  action: "chefsolo"
+                  parameters:
+                    isSudo: false
+                    recipeUrl: "{$.recipe-url}"
+                    runList: [ "recipe[cookbook_qubell_mssql::db_manage]" ]
+                    roles: [default]
+                    jattrs:
+                      cookbook_qubell_mssql:
+                        db:
+                          password: "{$.dbms.db-root-password}"                        
+                          port: "{$.dbms.db-port}"
+                        schema:
+                          dbname: "{$.db-name}"
+                          db_action: "{$.db-action}"
+          user-management:
+            steps:
+              - manage-user:
+                  action: "chefsolo"
+                  parameters:
+                    isSudo: false
+                    roles: [ default ]
+                    runList: [ "recipe[cookbook_qubell_mssql::user_manage]" ]
+                    recipeUrl: "{$.recipe-url}"
+                    jattrs:
+                      cookbook_qubell_mssql:
+                        db:
+                          password: "{$.dbms.db-root-password}"
+                          db-port: "{$.db-port}"
+                        schema:
+                          dbname: "{$.db-name}"
+                          username: "{$.db-user}"
+                          password: "{$.db-user-password}"
+                          privileges: "{$.db-user-privileges}"
+                          action: "{$.user-action}"
+                        hosts: "{$.app-hosts}"
+            return:
+              connection:
+                value:
+                  db-type: "mssql"
+                  db-user: "{$.db-user}"
+                  db-user-password: "{$.db-user-password}"
+                  db-host: "{$.db-host}"
+                  db-port: "{$.db-port}"
+                  db-driver: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+                  db-dstype: "javax.sql.DataSource"
+                  #connection-url: "jdbc:mysql://{$.db-host}:{$.db-port}/{$.db-user}?autoReconnect=true"
+                  validation-query: "select 1"
+
+          schema-management:
+            steps:
+              - create-db:
+                  action: "chefsolo"
+                  parameters:
+                    isSudo: false
+                    roles: [ default ]
+                    runList: [ "recipe[cookbook_qubell_mssql::db_manage]" ]
+                    recipeUrl: "{$.recipe-url}"
+                    jattrs:
+                      cookbook_qubell_mssql:
+                        db:
+                          password: "{$.dbms.db-root-password}"
+                          port: "{$.db-port}"
+                        schema:
+                          dbname: "{$.db-user}"
+                          db_action: "create"
+              - create-user:
+                  action: "chefsolo"
+                  precedingPhases: [ create-db ]
+                  parameters:
+                    isSudo: false
+                    roles: [ default ]
+                    runList: [ "recipe[cookbook_qubell_mssql::user_manage]" ]
+                    recipeUrl: "{$.recipe-url}"
+                    jattrs:
+                      cookbook_qubell_mssql:
+                        db:
+                          password: "{$.dbms.db-root-password}"
+                          db-port: "{$.db-port}"
+                        schema:
+                          dbname: "{$.db-user}"
+                          username: "{$.db-user}"
+                          password: "{$.db-user-password}"
+                          privileges: "{$.db-user-privileges}"
+                          action: "grant"
+                        hosts: ["%"]
+            return:
+              connection:
+                value:
+                  db-user-uri: "mysql://{$.db-user}:{$.db-user-password}@{$.db-host}:{$.db-port}/{$.db-user}"
+                  db-type: "mssql"
+                  db-name: "{$.db-user}"
+                  db-user: "{$.db-user}"
+                  db-user-password: "{$.db-user-password}"
+                  db-host: "{$.db-host}"
+                  db-port: "{$.db-port}"
+                  db-driver: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+                  db-dstype: "javax.sql.DataSource"
+                  #connection-url: "jdbc:mysql://{$.db-host}:{$.db-port}/{$.db-user}?autoReconnect=true"
+                  validation-query: "select 1"
+
+          file-query: # Additional workflow for run Sql Query
+            steps:
+              - run-file-query:
+                  action: "chefsolo"
+                  parameters:
+                    isSudo: false
+                    roles: [ default ]
+                    runList: [ "recipe[cookbook_qubell_mssql::file_query]" ]
+                    recipeUrl: "{$.recipe-url}"
+                    jattrs:
+                      cookbook_qubell_mssql:
+                        db-port: "{$.db-port}"
+                        schema:
+                          dbname: "{$.connection.db-name}"
+                          username: "{$.connection.db-user}"
+                          password: "{$.connection.db-user-password}"
+                        sql_url: "{$.sql-url}"
