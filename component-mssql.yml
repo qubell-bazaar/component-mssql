@@ -5,7 +5,6 @@ application:
     input.server-instance-size: "m3.medium"
     input.instance-prefix: "MSSQL"
     input.recipe-url: "https://dl.dropboxusercontent.com/u/250836/mssql.tar.gz"
-    #input.userdata-url: "https://dl.dropboxusercontent.com/u/250836/userdata.ps1"
     input.delay: "10 minutes"
     input.mssql-version: {v: "2008R2"}
     input.mssql-key: ""
@@ -18,7 +17,6 @@ application:
       server-instance-size: "bind(mssql#input.server-instance-size)"
       instance-prefix: "bind(mssql#input.instance-prefix)"
       recipe-url: "bind(mssql#input.recipe-url)"
-      #userdata-url: "bind(mssql#input.userdata-url)"
       delay: "bind(mssql#input.delay)"
       mssql-version: "bind(mssql#input.mssql-version)"
       mssql-key: "bind(mssql#input.mssql-key)"
@@ -46,7 +44,6 @@ application:
           server-instance-size: configuration(string)
           instance-prefix: configuration(string)
           recipe-url: configuration(string)
-          #userdata-url: configuration(string)
           delay: configuration(string)
           mssql-version:
             type: configuration(map<string,object>)
@@ -98,6 +95,8 @@ application:
                       userData:
                         |
                         <powershell>
+                          #Turn firewall off
+                          netsh advfirewall set allprofiles state off
                           If (Test-Path "C:\cygwin64\bin\bash.exe") {{
                           }} Else {{
                             If ((whoami).tolower().endswith("administrator")) {{
@@ -309,7 +308,7 @@ application:
                   db-port: "{$.db-port}"
                   db-driver: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
                   db-dstype: "javax.sql.DataSource"
-                  #connection-url: "jdbc:mysql://{$.db-host}:{$.db-port}/{$.db-user}?autoReconnect=true"
+                  connection-url: "jdbc:sqlserver://{$.db-host}:{$.db-port};databaseName=;user={$.db-name};password={$.db-user-password};"
                   validation-query: "select 1"
 
           schema-management:
@@ -352,7 +351,7 @@ application:
             return:
               connection:
                 value:
-                  db-user-uri: "mysql://{$.db-user}:{$.db-user-password}@{$.db-host}:{$.db-port}/{$.db-user}"
+                  db-user-uri: "mssql://{$.db-user}:{$.db-user-password}@{$.db-host}:{$.db-port}/{$.db-user}"
                   db-type: "mssql"
                   db-name: "{$.db-user}"
                   db-user: "{$.db-user}"
@@ -361,7 +360,7 @@ application:
                   db-port: "{$.db-port}"
                   db-driver: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
                   db-dstype: "javax.sql.DataSource"
-                  #connection-url: "jdbc:mysql://{$.db-host}:{$.db-port}/{$.db-user}?autoReconnect=true"
+                  connection-url: "jdbc:sqlserver://{$.db-host}:{$.db-port};databaseName=;user={$.db-user};password={$.db-user-password};"
                   validation-query: "select 1"
 
           file-query: # Additional workflow for run Sql Query
