@@ -4,7 +4,7 @@ application:
     input.server-os-password: "qwerty12!"
     input.server-instance-size: "m3.medium"
     input.instance-prefix: "MSSQL"
-    input.recipe-url: "https://dl.dropboxusercontent.com/u/250836/mssql.tar.gz"
+    input.recipe-url: "https://s3.amazonaws.com/qubell-starter-kit-artifacts/qubell-bazaar/component-mssql-cookbooks-stable-16aaba4.tar.gz"
     input.mssql-version: {v: "2008R2"}
     input.mssql-key: ""
     input.mssql-sa-password: "123QweAsd"
@@ -20,7 +20,7 @@ application:
       mssql-key: "bind(mssql#input.mssql-key)"
       mssql-sa-password: "bind(mssql#input.mssql-sa-password)"
       mssql-port: "bind(mssql#input.mssql-port)"
-    mssql:
+    MSSQL:
       schema: "bind(mssql#actions.schema-management)"
       db: "bind(mssql#actions.db-management)"
       user: "bind(mssql#actions.user-management)"
@@ -325,13 +325,14 @@ application:
               connection:
                 value:
                   db-type: "mssql"
+                  db-name: "{$.db-name}"
                   db-user: "{$.db-user}"
                   db-user-password: "{$.db-user-password}"
                   db-host: "{$.db-host}"
                   db-port: "{$.db-port}"
                   db-driver: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
                   db-dstype: "javax.sql.DataSource"
-                  connection-url: "jdbc:sqlserver://{$.db-host}:{$.db-port};databaseName=;user={$.db-name};password={$.db-user-password};"
+                  connection-url: "jdbc:sqlserver://{$.db-host}:{$.db-port};databaseName={$.db-name};user={$.db-user};password={$.db-user-password};"
                   validation-query: "select 1"
 
           schema-management:
@@ -383,7 +384,7 @@ application:
                   db-port: "{$.db-port}"
                   db-driver: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
                   db-dstype: "javax.sql.DataSource"
-                  connection-url: "jdbc:sqlserver://{$.db-host}:{$.db-port};databaseName=;user={$.db-user};password={$.db-user-password};"
+                  connection-url: "jdbc:sqlserver://{$.db-host}:{$.db-port};databaseName={$.db-user};user={$.db-user};password={$.db-user-password};"
                   validation-query: "select 1"
 
           file-query: # Additional workflow for run Sql Query
