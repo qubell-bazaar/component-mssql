@@ -1,6 +1,4 @@
-source "https://api.berkshelf.com"
-
-metadata
+site :opscode
 
 cookbook 'cookbook_qubell_mssql', git: 'git@github.com:qubell-bazaar/cookbook_qubell_mssql.git', ref: '0.1.0'
 cookbook 'database', git: 'git@github.com:qubell-bazaar/database.git', ref: 'e34dd370'
