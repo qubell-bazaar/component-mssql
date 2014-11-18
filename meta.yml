@@ -1,0 +1,15 @@
+kit:
+  name: "MS SQL Server"
+  link: https://github.com/qubell-bazaar/component-mssql 
+  applications:
+    - name: "Database"
+      manifest: https://raw.github.com/qubell-bazaar/component-mssql/1.0-34.1p/component-mssql.yml
+  provider:
+    name: "Qubell"
+    link: http://qubell.com
+  documentation:
+    overview: |
+      This application requires the following items to be configured in your environment:
+        * Amazon EC2 or Rackspace CloudServers account;
+        * Port 22, 3389, 1433 open on the ﬁrewall.
+      Please refer to the Getting Started for step-by-step instructions on how to configure your environment.
