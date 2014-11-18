@@ -16,8 +16,8 @@ class MSSQLComponentTestCase(BaseComponentTestCase):
     def timeout(cls):
         return 60
     @instance(byApplication=name)
-    @values({"MSSQL.Database Host": "hosts"}, "MSSQL.Database listen port": "db-port")
-    def test_port(self, instance, hosts, db-port):
+    @values({"db-host": "hosts", "db-port": "port"})
+    def test_port_open(self, instance, hosts, port):
         import socket
         import time
         time.sleep(60)
