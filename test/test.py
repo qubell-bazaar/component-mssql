@@ -6,7 +6,7 @@ from qubell.api.private.testing import instance, environment, workflow, values
 @environment({
     "default": {},
 })
-class JenkinsDevComponentTestCase(BaseComponentTestCase):
+class MSSQLComponentTestCase(BaseComponentTestCase):
     name = "component-mssql"
     apps = [{
         "name": name,
