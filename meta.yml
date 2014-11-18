@@ -3,7 +3,7 @@ kit:
   link: https://github.com/qubell-bazaar/component-mssql 
   applications:
     - name: "Database"
-      manifest: https://raw.github.com/qubell-bazaar/component-mysql-dev/1.0-34.1p/component-mssql.yml
+      manifest: https://raw.github.com/qubell-bazaar/component-mssql/1.0-34.1p/component-mssql.yml
   provider:
     name: "Qubell"
     link: http://qubell.com
