@@ -1,6 +1,6 @@
 application:
   configuration:
-    input.server-os: {image: "us-east-1/ami-ba13abd2", identity: "Administrator"}
+    input.server-os: {image: "us-east-1/ami-c49c0dac", identity: "Administrator"}
     input.server-os-password: "qwerty12!"
     input.server-instance-size: "m3.medium"
     input.instance-prefix: "MSSQL"
@@ -36,8 +36,8 @@ application:
           server-os:
             type: configuration(map<string,object>)
             suggestions:
-              east: {image: "us-east-1/ami-ba13abd2", identity: "Administrator"}
-              west: {image: "us-west-1/ami-df43569a", identity: "Administrator"}
+              east: {image: "us-east-1/ami-c49c0dac", identity: "Administrator"}
+              west: {image: "us-west-1/ami-45332200", identity: "Administrator"}
           server-os-password: configuration(string)
           server-instance-size: configuration(string)
           instance-prefix: configuration(string)
