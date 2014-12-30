@@ -288,6 +288,7 @@ application:
                     recipeUrl: "{$.recipe-url}"
                     runList: [ "recipe[cookbook_qubell_mssql]" ]
                     roles: [default]
+                    version: 11.16.4-1
                     jattrs:
                       sql_server:
                         version: "{$.mssql-version.v}"
@@ -323,6 +324,7 @@ application:
                     recipeUrl: "{$.recipe-url}"
                     runList: [ "recipe[cookbook_qubell_mssql::db_manage]" ]
                     roles: [default]
+                    version: 11.16.4-1
                     jattrs:
                       cookbook_qubell_mssql:
                         db:
@@ -340,6 +342,7 @@ application:
                     roles: [ default ]
                     runList: [ "recipe[cookbook_qubell_mssql::user_manage]" ]
                     recipeUrl: "{$.recipe-url}"
+                    version: 11.16.4-1
                     jattrs:
                       cookbook_qubell_mssql:
                         db:
@@ -375,6 +378,7 @@ application:
                     roles: [ default ]
                     runList: [ "recipe[cookbook_qubell_mssql::db_manage]" ]
                     recipeUrl: "{$.recipe-url}"
+                    version: 11.16.4-1
                     jattrs:
                       cookbook_qubell_mssql:
                         db:
@@ -391,6 +395,7 @@ application:
                     roles: [ default ]
                     runList: [ "recipe[cookbook_qubell_mssql::user_manage]" ]
                     recipeUrl: "{$.recipe-url}"
+                    version: 11.16.4-1
                     jattrs:
                       cookbook_qubell_mssql:
                         db:
@@ -427,6 +432,7 @@ application:
                     roles: [ default ]
                     runList: [ "recipe[cookbook_qubell_mssql::file_query]" ]
                     recipeUrl: "{$.recipe-url}"
+                    version: 11.16.4-1
                     jattrs:
                       cookbook_qubell_mssql:
                         db-port: "{$.db-port}"
