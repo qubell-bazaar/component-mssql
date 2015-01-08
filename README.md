@@ -5,7 +5,7 @@ MSSQL Server
 
 Installs and configures MSSQL Server 2008R2/2012
 
-[![Install](https://raw.github.com/qubell-bazaar/component-skeleton/master/img/install.png)](https://express.qubell.com/applications/upload?metadataUrl=https://raw.github.com/qubell-bazaar/component-mssql/1.1-35p/meta.yml)
+[![Install](https://raw.github.com/qubell-bazaar/component-skeleton/master/img/install.png)](https://express.qubell.com/applications/upload?metadataUrl=https://raw.github.com/qubell-bazaar/component-mssql/2.0-36p/meta.yml)
 ------------------------------------------------
 
 Features
