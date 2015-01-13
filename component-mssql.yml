@@ -6,7 +6,7 @@ application:
     input.mirror: "http://adp-repo.s3-website-us-east-1.amazonaws.com/cygwin"
     input.packages: "openssh,curl,util-linux,procps,wget,unzip"
     input.instance-prefix: "MSSQL"
-    input.recipe-url: "https://s3.amazonaws.com/qubell-starter-kit-artifacts/qubell-bazaar/component-mssql-cookbooks-stable-6b16ab3.tar.gz"
+    input.recipe-url: "https://s3.amazonaws.com/qubell-starter-kit-artifacts/qubell-bazaar/component-mssql-cookbooks-stable-6b64b46.tar.gz"
     input.mssql-version: {v: "2008R2"}
     input.mssql-key: ""
     input.mssql-sa-password: "123QweAsd"
