@@ -1,6 +1,6 @@
 application:
   configuration:
-    input.server-os: {image: "us-east-1/ami-c49c0dac", identity: "Administrator"}
+    input.server-os: {image: "us-east-1/ami-ac3a1cc4", identity: "Administrator"}
     input.server-os-password: "qwerty12!"
     input.server-instance-size: "m3.large"
     input.mirror: "http://adp-repo.s3-website-us-east-1.amazonaws.com/cygwin"
@@ -40,7 +40,7 @@ application:
           server-os:
             type: configuration(map<string,object>)
             suggestions:
-              east: {image: "us-east-1/ami-c49c0dac", identity: "Administrator"}
+              east: {image: "us-east-1/ami-ac3a1cc4", identity: "Administrator"}
               west: {image: "us-west-1/ami-45332200", identity: "Administrator"}
           server-os-password: configuration(string)
           server-instance-size: configuration(string)
