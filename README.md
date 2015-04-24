@@ -1,6 +1,9 @@
 MSSQL Server
 ===============
 
+Version 2.0-36p
+---------------
+
 ![](http://www.arvixe.com/images/landing_pages/mssql_2008_hosting.png)
 
 Installs and configures MSSQL Server 2008R2/2012
